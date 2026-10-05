@@ -1,6 +1,6 @@
 ---
 title: "tidycensus Intro & GitHub Collab"
-author: "Amber Camp" 
+author: "Nikkos Miyasato" 
 date: "`r Sys.Date()`"
 format: html
 editor: visual
@@ -10,9 +10,9 @@ toc: true
 ## Install and Load Packages
 
 ```{r Libraries}
-# install.packages("tidycensus")
-# install.packages("reactable")
-# install.packages("ggpubr")
+#install.packages("tidycensus")
+#install.packages("reactable")
+#install.packages("ggpubr")
 
 library(tidycensus)  # star of the show, what we will use to import data
 library(tidyverse) # you know her
@@ -41,7 +41,7 @@ API stands for Application Programming Interface. Here is the idea:
 [Request your own](https://api.census.gov/data/key_signup.html) or use Amber's (below).
 
 ```{r Define API Key, message=FALSE}
-census_api_key("")
+census_api_key("4bf4671493320fc66fb2ae7078c6446ffae0012b")
 ```
 
 ## Import Variables
