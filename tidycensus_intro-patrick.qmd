@@ -137,6 +137,34 @@ girafe(ggobj = computer_map, width = 700, height = 400)
 
 10/7/26 FOLLOWUP DAY
 
+### WEDNESDAY WARMUP
+
+```{r}
+# get the data (looking at COMPUTER AND INTERNET ACCESS)
+mine2 <- get_acs(
+  geography = "tract",
+  variables = c(computer_access2 = "DP02_0152P"),
+  state = "PR",
+#  county = "Honolulu",
+  geometry = TRUE,
+  output = "wide",
+  year = 2024)# %>% 
+#  dplyr::filter(GEOID != "15003981200" & GEOID !="15003981900")
+
+# map it
+computer_map2 <- ggplot(mine2) +
+  geom_sf_interactive(
+    aes(
+      fill = computer_accessE2,
+      tooltip = paste(NAME, ": ", computer_accessE2, "%"),
+      data_id = NAME)) +
+  scale_fill_viridis_c(option = "plasma") +
+  theme_void() 
+
+girafe(ggobj = computer_map2, width = 700, height = 400)
+
+```
+
 ## Back to Exploring Poverty...
 
 ## Time Series
@@ -205,7 +233,7 @@ oahu_family_poverty_college_education <- get_acs(
 ```{r Scatter Plot, warning=FALSE, message=FALSE}
 ggplot(oahu_family_poverty_college_education, aes(x = percent_povertyE,y = percent_BAE)) +
   geom_point() +
-  geom_smooth() + # adds a regression line (LOESS)
+  geom_smooth(method = "lm") + # adds a regression line (LOESS)
   stat_cor() + # prints R and p
   theme_minimal() + 
   labs(title = "Comparing Rates of Higher Education to Poverty, Honolulu County",
