@@ -110,7 +110,7 @@ Now let's look at family poverty in Honolulu County over time
 # get the data (looking at ____)
 NAME <- get_acs(
   geography = "tract",
-  variables = c(NAME = "DP02_0158"),
+  variables = c(NAME = "89.17"),
   state = "HI",
   county = "Honolulu",
   geometry = TRUE,
