@@ -1,6 +1,6 @@
 ---
 title: "tidycensus Intro & GitHub Collab"
-author: "Amber Camp" 
+author: "Patrick Cheng" 
 date: "`r Sys.Date()`"
 format: html
 editor: visual
@@ -41,7 +41,7 @@ API stands for Application Programming Interface. Here is the idea:
 [Request your own](https://api.census.gov/data/key_signup.html) or use Amber's (below).
 
 ```{r Define API Key, message=FALSE}
-census_api_key("")
+census_api_key("98a9bb07fc27f4b2388d8a0874ac201786f550e9")
 ```
 
 ## Import Variables
@@ -52,6 +52,7 @@ These variables from the American Community Survey (ACS) Data Profiles for 2024 
 
 ```{r Import ACS Variables}
 acs_2024_variables <- load_variables(2024, "acs5/profile")
+# load variables from 2024; acs5 designated
 ```
 
 The dataframe we just created (`acs_2024_variables`) has all the info we need, but is pretty bland. Try using `reactable` for something a bit more user-friendly.
@@ -67,12 +68,12 @@ Let's investigate family poverty on Oahu at the census tract level.
 **DP03_0119P** is the code for Percent!!PERCENTAGE OF FAMILIES AND PEOPLE WHOSE INCOME IN THE PAST 12 MONTHS IS BELOW THE POVERTY LEVEL!!All families
 
 ```{r Import Data}
-oahu_poverty <- get_acs(
+oahu_poverty <- get_acs( #get data from acs
   geography = "tract",
-  variables = c(percent_poverty = "DP03_0119P"),
+  variables = c(percent_poverty = "DP03_0119P"), # code from table above, gets varaiable + renames
   state = "HI",
   county = "Honolulu",
-  geometry = TRUE,
+  geometry = TRUE, # give back stuff that's mappable
   output = "wide",
   year = 2024) %>% 
   dplyr::filter(GEOID != "15003981200" & GEOID !="15003981900") # filters out tract in NW Hawaiian Islands that makes map very small and Mamala Bay Golf Course that has %100 percent of families living below the poverty line(??)
@@ -90,7 +91,7 @@ Now, let's map the data
 oahu_poverty_map <- ggplot(oahu_poverty) +
   geom_sf_interactive(
     aes(
-      fill = percent_povertyE,
+      fill = percent_povertyE, # to fill in with % poverty
       tooltip = paste(NAME, ": ", percent_povertyE, "%"),
       data_id = NAME)) +
   scale_fill_viridis_c(option = "plasma") +
@@ -107,10 +108,10 @@ Now let's look at family poverty in Honolulu County over time
 ## Try an example of your own
 
 ```{r}
-# get the data (looking at ____)
-NAME <- get_acs(
+# get the data (looking at COMPUTER AND INTERNET ACCESS)
+mine <- get_acs(
   geography = "tract",
-  variables = c(NAME = "DP02_0158"),
+  variables = c(computer_access = "DP02_0152"),
   state = "HI",
   county = "Honolulu",
   geometry = TRUE,
@@ -119,16 +120,48 @@ NAME <- get_acs(
   dplyr::filter(GEOID != "15003981200" & GEOID !="15003981900")
 
 # map it
-oahu_unemployment_map <- ggplot(NAME) +
+computer_map <- ggplot(mine) +
   geom_sf_interactive(
     aes(
-      fill = percent_unemploymentE,
-      tooltip = paste(NAME, ": ", percent_unemploymentE, "%"),
+      fill = computer_accessE,
+      tooltip = paste(NAME, ": ", computer_accessE, "%"),
       data_id = NAME)) +
   scale_fill_viridis_c(option = "plasma") +
   theme_void() 
 
-girafe(ggobj = oahu_unemployment_map, width = 700, height = 400)
+girafe(ggobj = computer_map, width = 700, height = 400)
+
+```
+
+27.01 = UH MANOA, 28.01 CHAMINADE
+
+10/7/26 FOLLOWUP DAY
+
+### WEDNESDAY WARMUP
+
+```{r}
+# get the data (looking at COMPUTER AND INTERNET ACCESS)
+mine2 <- get_acs(
+  geography = "tract",
+  variables = c(computer_access2 = "DP02_0152P"),
+  state = "PR",
+#  county = "Honolulu",
+  geometry = TRUE,
+  output = "wide",
+  year = 2024)# %>% 
+#  dplyr::filter(GEOID != "15003981200" & GEOID !="15003981900")
+
+# map it
+computer_map2 <- ggplot(mine2) +
+  geom_sf_interactive(
+    aes(
+      fill = computer_accessE2,
+      tooltip = paste(NAME, ": ", computer_accessE2, "%"),
+      data_id = NAME)) +
+  scale_fill_viridis_c(option = "plasma") +
+  theme_void() 
+
+girafe(ggobj = computer_map2, width = 700, height = 400)
 
 ```
 
@@ -200,7 +233,7 @@ oahu_family_poverty_college_education <- get_acs(
 ```{r Scatter Plot, warning=FALSE, message=FALSE}
 ggplot(oahu_family_poverty_college_education, aes(x = percent_povertyE,y = percent_BAE)) +
   geom_point() +
-  geom_smooth() + # adds a regression line (LOESS)
+  geom_smooth(method = "lm") + # adds a regression line (LOESS)
   stat_cor() + # prints R and p
   theme_minimal() + 
   labs(title = "Comparing Rates of Higher Education to Poverty, Honolulu County",
@@ -243,7 +276,24 @@ REMEMBER! [Pull]{.underline} before working in the `-collab.qmd` file. [Save, Co
 Investigating (insert variable here) on Oahu at the census tract level.
 
 ```{r, message=FALSE, warning=FALSE, results='hide'}
+# Import ACS Variables
+acs_2024_variables <- load_variables(2024, "acs5/profile") # loads variables from 2024; acs5 designated
 
+# Reactable
+reactable(acs_2024_variables, filterable = TRUE, showPageSizeOptions = TRUE, minRows = 10)
+```
+
+```{r, message=FALSE, warning=FALSE, results='hide'}
+# Import data
+oahu_TOPICHERE <- get_acs( #get data from acs
+  geography = "tract",
+  variables = c(percent_TOPICHERE = "CODEHERE"), # code from table above, gets varaiable + renames
+  state = "HI",
+  county = "Honolulu",
+  geometry = TRUE, # give back stuff that's mappable
+  output = "wide",
+  year = 2024) %>% 
+  dplyr::filter(GEOID != "15003981200" & GEOID !="15003981900") # filters out tract in NW Hawaiian Islands that makes map very small and Mamala Bay Golf Course that has %100 percent of families living below the poverty line(??)
 
 ```
 
