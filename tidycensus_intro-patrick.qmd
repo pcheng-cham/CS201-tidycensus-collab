@@ -135,6 +135,8 @@ girafe(ggobj = computer_map, width = 700, height = 400)
 
 27.01 = UH MANOA, 28.01 CHAMINADE
 
+10/7/26 FOLLOWUP DAY
+
 ## Back to Exploring Poverty...
 
 ## Time Series
