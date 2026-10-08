@@ -69,7 +69,7 @@ Let's investigate family poverty on Oahu at the census tract level.
 ```{r Import Data}
 oahu_poverty <- get_acs(
   geography = "tract",
-  variables = c(percent_poverty = "DP03_0119P"),
+  variables = c(percent_poverty = "DP03_"),
   state = "HI",
   county = "Honolulu",
   geometry = TRUE,
@@ -110,7 +110,7 @@ Now let's look at family poverty in Honolulu County over time
 # get the data (looking at ____)
 NAME <- get_acs(
   geography = "tract",
-  variables = c(NAME = "89.17"),
+  variables = c(computer_access = "DP02_0152"),
   state = "HI",
   county = "Honolulu",
   geometry = TRUE,
@@ -119,20 +119,45 @@ NAME <- get_acs(
   dplyr::filter(GEOID != "15003981200" & GEOID !="15003981900")
 
 # map it
-oahu_unemployment_map <- ggplot(NAME) +
+computer_map <- ggplot(NAME) +
   geom_sf_interactive(
     aes(
-      fill = percent_unemploymentE,
-      tooltip = paste(NAME, ": ", percent_unemploymentE, "%"),
+      fill = computer_accessE,
+      tooltip = paste(NAME, ": ", computer_accessE, "%"),
       data_id = NAME)) +
   scale_fill_viridis_c(option = "plasma") +
   theme_void() 
 
-girafe(ggobj = oahu_unemployment_map, width = 700, height = 400)
+girafe(ggobj = computer_map, width = 700, height = 400)
 
 ```
 
-## Back to Exploring Poverty...
+### Wednesday Warm-up
+
+```{r}
+pverty <- get_acs(
+  geography = "tract",
+  variables = c(computer_access = "DP03_0019P"),
+  state = "HI",
+  county = "Honolulu",
+  geometry = TRUE,
+  output = "wide",
+  year = 2024) %>% 
+  dplyr::filter(GEOID != "15003981200" & GEOID !="15003981900")
+
+poverty_map <- ggplot(NAME) +
+  geom_sf_interactive(
+    aes(
+      fill = computer_accessE,
+      tooltip = paste(NAME, ": ", computer_accessE, "%"),
+      data_id = NAME)) +
+  scale_fill_viridis_c(option = "plasma") +
+  theme_void() 
+
+girafe(ggobj = computer_map, width = 700, height = 400)
+```
+
+### Back to Exploring Poverty...
 
 ## Time Series
 

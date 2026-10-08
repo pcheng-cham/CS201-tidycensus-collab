@@ -42,6 +42,18 @@ API stands for Application Programming Interface. Here is the idea:
 
 ```{r Define API Key, message=FALSE}
 census_api_key("98a9bb07fc27f4b2388d8a0874ac201786f550e9")
+
+Sys.getenv("CENSUS_API_KEY")
+
+library(tidycensus)
+
+get_acs(
+  geography = "state",
+  variables = "B01003_001",
+  year = 2023
+)
+
+
 ```
 
 ## Import Variables
@@ -298,6 +310,23 @@ thisData <- get_acs(
 
 ```{r ERROR HERE @NIKKOS, message=FALSE, warning=FALSE, results='hide'}
 ##### maybe the data isn't compatible? check code (DP02_0114P) in reactable.
+
+#Syntax test
+oahu_languageSpokenAtHome_notEnglish <- get_acs(
+  geography = "tract",
+  variables = c(
+    percent_languageSpokenAtHome_notEnglish = "DP02_0114P"
+  ),
+  state = "HI",
+  county = "Honolulu",
+  geometry = TRUE,
+  output = "wide",
+  year = 2024
+) %>% 
+  dplyr::filter(
+    GEOID != "15003981200" & 
+      GEOID != "15003981900"
+  )
 
 # Import data
 oahu_languageSpokenAtHome_notEnglish <- get_acs( #get data from acs
