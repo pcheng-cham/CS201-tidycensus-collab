@@ -283,25 +283,48 @@ acs_2024_variables <- load_variables(2024, "acs5/profile") # loads variables fro
 reactable(acs_2024_variables, filterable = TRUE, showPageSizeOptions = TRUE, minRows = 10)
 ```
 
-```{r, message=FALSE, warning=FALSE, results='hide'}
-# Import data
-oahu_TOPICHERE <- get_acs( #get data from acs
+```{r}
+# forcing raw API call to print
+thisData <- get_acs(
   geography = "tract",
-  variables = c(percent_TOPICHERE = "CODEHERE"), # code from table above, gets varaiable + renames
+  variables = "DP02_0114P",
+  state = "HI",
+  year = 2024,
+  show_call = TRUE
+)
+# output in console is
+#   https://api.census.gov/data/2024/acs/acs5/profile?get=DP02_0114PE%2CDP02_0114PM%2CNAME&for=tract%3A%2A&in=state%3A15
+```
+
+```{r ERROR HERE @NIKKOS, message=FALSE, warning=FALSE, results='hide'}
+##### maybe the data isn't compatible? check code (DP02_0114P) in reactable.
+
+# Import data
+oahu_languageSpokenAtHome_notEnglish <- get_acs( #get data from acs
+  geography = "tract",
+  variables = c(percent_languageSpokenAtHome_notEnglish = "DP02_0114P
+"), # Percent!!LANGUAGE SPOKEN AT HOME!!Population 5 years and over!!Language other than English
   state = "HI",
   county = "Honolulu",
   geometry = TRUE, # give back stuff that's mappable
   output = "wide",
   year = 2024) %>% 
   dplyr::filter(GEOID != "15003981200" & GEOID !="15003981900") # filters out tract in NW Hawaiian Islands that makes map very small and Mamala Bay Golf Course that has %100 percent of families living below the poverty line(??)
-
 ```
 
 ### Mapping
 
 ```{r, message=FALSE, warning=FALSE, results='hide'}
+oahu_languageSpokenAtHome_notEnglish_map <- ggplot(oahu_languageSpokenAtHome_notEnglish) +
+  geom_sf_interactive(
+    aes(
+      fill = percent_languageSpokenAtHome_notEnglishE, # to fill in with % poverty
+      tooltip = paste(NAME, ": ", percent_languageSpokenAtHome_notEnglishE, "%"),
+      data_id = NAME)) +
+  scale_fill_viridis_c(option = "plasma") +
+  theme_void() 
 
-
+girafe(ggobj = oahu_languageSpokenAtHome_notEnglish_map, width = 700, height = 400)
 ```
 
 ### Time Series
