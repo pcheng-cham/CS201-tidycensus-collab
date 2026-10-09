@@ -42,18 +42,6 @@ API stands for Application Programming Interface. Here is the idea:
 
 ```{r Define API Key, message=FALSE}
 census_api_key("98a9bb07fc27f4b2388d8a0874ac201786f550e9")
-
-Sys.getenv("CENSUS_API_KEY")
-
-library(tidycensus)
-
-get_acs(
-  geography = "state",
-  variables = "B01003_001",
-  year = 2023
-)
-
-
 ```
 
 ## Import Variables
@@ -238,8 +226,6 @@ oahu_family_poverty_college_education <- get_acs(
   output = "wide",
   year = 2024) %>% 
   dplyr::filter(GEOID != "15003981200" & GEOID !="15003981900")
-
-
 ```
 
 ```{r Scatter Plot, warning=FALSE, message=FALSE}
@@ -253,7 +239,6 @@ ggplot(oahu_family_poverty_college_education, aes(x = percent_povertyE,y = perce
        x = "Percent of Families Living Below the Poverty Line",
        y = "Percent with a BA or higher",
        caption = "Shaded area represents margin of error around the estimate")
-  
 ```
 
 Interesting. With each point being a census tract, and a correlation coefficient (*R*) of -0.41, what is the relationship between poverty and education at the tract level in Honolulu County?
@@ -283,11 +268,18 @@ Directions:
 
 REMEMBER! [Pull]{.underline} before working in the `-collab.qmd` file. [Save, Commit, and Push]{.underline} your changes when you are done. The next person should [Pull]{.underline} before working, and so on.
 
+```{r, eval=FALSE}
+
+# define API key
+census_api_key("loremipsumdolorsitametconsecteturadipiscingelit")
+```
+
 ### Import Data
 
 Investigating (insert variable here) on Oahu at the census tract level.
 
 ```{r, message=FALSE, warning=FALSE, results='hide'}
+
 # Import ACS Variables
 acs_2024_variables <- load_variables(2024, "acs5/profile") # loads variables from 2024; acs5 designated
 
@@ -295,8 +287,9 @@ acs_2024_variables <- load_variables(2024, "acs5/profile") # loads variables fro
 reactable(acs_2024_variables, filterable = TRUE, showPageSizeOptions = TRUE, minRows = 10)
 ```
 
-```{r}
-# forcing raw API call to print; debugging attempt
+```{r, eval=FALSE}
+
+# api debugging attempt; forcing raw API call to print
 thisData <- get_acs(
   geography = "tract",
   variables = "DP02_0114P",
@@ -308,10 +301,23 @@ thisData <- get_acs(
 #   https://api.census.gov/data/2024/acs/acs5/profile?get=DP02_0114PE%2CDP02_0114PM%2CNAME&for=tract%3A%2A&in=state%3A15
 ```
 
-```{r ERROR HERE @NIKKOS, message=FALSE, warning=FALSE, results='hide'}
-##### maybe the data isn't compatible? check code (DP02_0114P) in reactable.
+```{r, eval=FALSE}
 
-#Syntax test
+# Nikkos's API debug attempt
+Sys.getenv("CENSUS_API_KEY")
+
+library(tidycensus)
+
+get_acs(
+  geography = "state",
+  variables = "B01003_001",
+  year = 2023
+)
+```
+
+```{r, eval=FALSE}
+
+#Nikkos Syntax test
 oahu_languageSpokenAtHome_notEnglish <- get_acs(
   geography = "tract",
   variables = c(
@@ -327,6 +333,11 @@ oahu_languageSpokenAtHome_notEnglish <- get_acs(
     GEOID != "15003981200" & 
       GEOID != "15003981900"
   )
+```
+
+```{r, message=FALSE, warning=FALSE, results='hide'}
+##### maybe the data isn't compatible? check code (DP02_0114P) in reactable.
+  ##### FIXED
 
 # Import data
 oahu_languageSpokenAtHome_notEnglish <- get_acs( #get data from acs
@@ -407,6 +418,7 @@ ggplot(oahu_languageSpokenAtHome_notEnglish_2014_2024, aes(x = year, y = estimat
 Exploring the relationship between (insert variable here) and (insert variable here) with a scatter plot
 
 ```{r, message=FALSE, warning=FALSE, results='hide'}
+
 # gettinhg data for scatter plot
   # for percentage of "non-English language spoken at home" relationship with education
 
