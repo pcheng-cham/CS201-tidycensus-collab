@@ -1,6 +1,6 @@
 ---
 title: "tidycensus Intro & GitHub Collab"
-author: "Patrick Cheng" 
+author: "Patrick Cheng, Nikkos Gordon" 
 date: "`r Sys.Date()`"
 format: html
 editor: visual
