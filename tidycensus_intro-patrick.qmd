@@ -41,7 +41,7 @@ API stands for Application Programming Interface. Here is the idea:
 [Request your own](https://api.census.gov/data/key_signup.html) or use Amber's (below).
 
 ```{r Define API Key, message=FALSE}
-census_api_key("98a9bb07fc27f4b2388d8a0874ac201786f550e9")
+census_api_key("loremipsumdolorsitametconsecteturadipiscingelit")
 ```
 
 ## Import Variables
@@ -143,9 +143,9 @@ girafe(ggobj = computer_map, width = 700, height = 400)
 # get the data (looking at COMPUTER AND INTERNET ACCESS)
 mine2 <- get_acs(
   geography = "tract",
-  variables = c(computer_access2 = "DP02_0152P"),
+  variables = c(computer_access2 = "DP02PR_0152P"), # DP02_0152P; CHANGED TO PUERTO RICO CODE
   state = "PR",
-#  county = "Honolulu",
+  #  county = "Honolulu",
   geometry = TRUE,
   output = "wide",
   year = 2024)# %>% 
@@ -155,14 +155,13 @@ mine2 <- get_acs(
 computer_map2 <- ggplot(mine2) +
   geom_sf_interactive(
     aes(
-      fill = computer_accessE2,
-      tooltip = paste(NAME, ": ", computer_accessE2, "%"),
+      fill = computer_access2E,
+      tooltip = paste(NAME, ": ", computer_access2E, "%"), # E is appended automatically
       data_id = NAME)) +
   scale_fill_viridis_c(option = "plasma") +
   theme_void() 
 
 girafe(ggobj = computer_map2, width = 700, height = 400)
-
 ```
 
 ## Back to Exploring Poverty...
@@ -226,8 +225,6 @@ oahu_family_poverty_college_education <- get_acs(
   output = "wide",
   year = 2024) %>% 
   dplyr::filter(GEOID != "15003981200" & GEOID !="15003981900")
-
-
 ```
 
 ```{r Scatter Plot, warning=FALSE, message=FALSE}
@@ -241,7 +238,6 @@ ggplot(oahu_family_poverty_college_education, aes(x = percent_povertyE,y = perce
        x = "Percent of Families Living Below the Poverty Line",
        y = "Percent with a BA or higher",
        caption = "Shaded area represents margin of error around the estimate")
-  
 ```
 
 Interesting. With each point being a census tract, and a correlation coefficient (*R*) of -0.41, what is the relationship between poverty and education at the tract level in Honolulu County?
@@ -271,27 +267,150 @@ Directions:
 
 REMEMBER! [Pull]{.underline} before working in the `-collab.qmd` file. [Save, Commit, and Push]{.underline} your changes when you are done. The next person should [Pull]{.underline} before working, and so on.
 
+```{r, eval=FALSE}
+
+# define API key
+census_api_key("loremipsumdolorsitametconsecteturadipiscingelit")
+```
+
 ### Import Data
 
 Investigating (insert variable here) on Oahu at the census tract level.
 
 ```{r, message=FALSE, warning=FALSE, results='hide'}
 
+# Import ACS Variables
+acs_2024_variables <- load_variables(2024, "acs5/profile") # loads variables from 2024; acs5 designated
 
+# Reactable
+reactable(acs_2024_variables, filterable = TRUE, showPageSizeOptions = TRUE, minRows = 10)
+```
+
+```{r, eval=FALSE}
+
+# api debugging attempt; forcing raw API call to print
+thisData <- get_acs(
+  geography = "tract",
+  variables = "DP02_0114P",
+  state = "HI",
+  year = 2024,
+  show_call = TRUE
+)
+# error output in console is
+#   https://api.census.gov/data/2024/acs/acs5/profile?get=DP02_0114PE%2CDP02_0114PM%2CNAME&for=tract%3A%2A&in=state%3A15
+```
+
+```{r, eval=FALSE}
+
+# Nikkos's API debug attempt
+Sys.getenv("CENSUS_API_KEY")
+
+library(tidycensus)
+
+get_acs(
+  geography = "state",
+  variables = "B01003_001",
+  year = 2023
+)
+```
+
+```{r, eval=FALSE}
+
+#Nikkos Syntax test
+oahu_languageSpokenAtHome_notEnglish <- get_acs(
+  geography = "tract",
+  variables = c(
+    percent_languageSpokenAtHome_notEnglish = "DP02_0114P"
+  ),
+  state = "HI",
+  county = "Honolulu",
+  geometry = TRUE,
+  output = "wide",
+  year = 2024
+) %>% 
+  dplyr::filter(
+    GEOID != "15003981200" & 
+      GEOID != "15003981900"
+  )
+```
+
+```{r, message=FALSE, warning=FALSE, results='hide'}
+##### maybe the data isn't compatible? check code (DP02_0114P) in reactable.
+  ##### FIXED
+
+# Import data
+oahu_languageSpokenAtHome_notEnglish <- get_acs( #get data from acs
+  geography = "tract",
+  variables = c(percent_languageSpokenAtHome_notEnglish = "DP02_0114P"), # Percent!!LANGUAGE SPOKEN AT HOME!!Population 5 years and over!!Language other than English
+  state = "HI",
+  county = "Honolulu",
+  geometry = TRUE, # give back stuff that's mappable
+  output = "wide",
+  year = 2024) %>% 
+  dplyr::filter(GEOID != "15003981200" & GEOID !="15003981900")
+# filters out tract in NW Hawaiian Islands that makes map very small and Mamala Bay Golf Course that has %100 percent of families living below the poverty line(??)
 ```
 
 ### Mapping
 
 ```{r, message=FALSE, warning=FALSE, results='hide'}
 
+# mapping using ggplot AND girafe/ggobj
+oahu_languageSpokenAtHome_notEnglish_map <- ggplot(oahu_languageSpokenAtHome_notEnglish) +
+  geom_sf_interactive(
+    aes(
+      fill = percent_languageSpokenAtHome_notEnglishE, # to fill in with % poverty
+      tooltip = paste(NAME, ": ", percent_languageSpokenAtHome_notEnglishE, "%"),
+      data_id = NAME)) +
+  scale_fill_viridis_c(option = "plasma") +
+  theme_void() 
 
+girafe(ggobj = oahu_languageSpokenAtHome_notEnglish_map, width = 700, height = 400)
 ```
 
 ### Time Series
 
 ```{r, message=FALSE, warning=FALSE, results='hide'}
 
+# getting time data
+myYears <- 2014:2024 # specify years
+names(myYears) <- myYears
 
+oahu_languageSpokenAtHome_notEnglish_2014_2024 <- map_dfr(myYears, ~{
+  get_acs(
+    geography = "county",
+    variables = c(percent_languageSpokenAtHome_notEnglish = "DP02_0114P"),
+    state = "HI",
+    county = "Honolulu",
+    year = .x,
+    survey = "acs5")}, .id = "year")
+```
+
+```{r, eval=FALSE}
+
+# plotting time series/showing variable over time
+ggplot(oahu_languageSpokenAtHome_notEnglish_2014_2024, aes(x = year, y = estimate, group = 1)) + 
+  geom_line() + 
+  geom_point() +
+  labs(title = "Honolulu County Non-English Language at Home (ACS Rolling 5-year estimates)",
+       x = "ACS Release Year (5-year window)",
+       y = "Percent in Spoken Non-English Language at Home")
+```
+
+```{r}
+
+# cleaner/"prettier" plot
+ggplot(oahu_languageSpokenAtHome_notEnglish_2014_2024, aes(x = year, y = estimate, group = 1)) + 
+  geom_ribbon(aes(ymax = estimate + moe, ymin = estimate - moe), 
+              fill = "steelblue",
+              alpha = 0.4) + 
+  geom_line(color = "steelblue") + 
+  geom_point(color = "steelblue", size = 2) + 
+  theme_minimal() + 
+  labs(title = "Honolulu County Non-English Language at Home (ACS Rolling 5-year estimates)",
+       x = "ACS Release Year (5-year window)",
+       y = "Percent in Spoken Non-English Language at Home",
+       caption = "Shaded area represents margin of error around the estimate")
 ```
 
 ### Scatter Plot
@@ -300,7 +419,37 @@ Exploring the relationship between (insert variable here) and (insert variable h
 
 ```{r, message=FALSE, warning=FALSE, results='hide'}
 
+# gettinhg data for scatter plot
+  # for percentage of "non-English language spoken at home" relationship with education
 
+oahu_languageSpokenAtHome_notEnglish_vs_college_education <- get_acs(
+  geography = "tract",
+  variables = c(percent_languageSpokenAtHome_notEnglish = "DP02_0114P", # Percent!!LANGUAGE SPOKEN AT HOME!!Population 5 years and over!!Language other than English
+                percent_BA = "DP02_0068P"), # Percent!!EDUCATIONAL ATTAINMENT!!Population 25 years and over!!Bachelor's degree or higher
+  state = "HI",
+  county = "Honolulu",
+  geometry = TRUE,
+  output = "wide",
+  year = 2024) %>% 
+  dplyr::filter(GEOID != "15003981200" & GEOID !="15003981900")
+```
+
+```{r}
+
+# plotting scatter plot
+ggplot(oahu_languageSpokenAtHome_notEnglish_vs_college_education, aes(x = percent_languageSpokenAtHome_notEnglishE,y = percent_BAE)) +
+  geom_point() +
+  geom_smooth(method = "lm") + # adds a regression line (LOESS)
+  stat_cor() + # prints R and p
+  theme_minimal() + 
+  labs(title = "Comparing Rates of Higher Education to Spoken Household Langague
+not being English, Honolulu County",
+       subtitle = "ACS 5-year, 2024 release",
+       x = "Percent of Families using non-English spoken language within home",
+       y = "Percent with a BA or higher",
+       caption = "Shaded area represents margin of error around the estimate")
 ```
 
 ### Describe what you found
+
+There is a slight negative correlation between higher education and families using a non-English language as their primary spoken language within their home setting.
