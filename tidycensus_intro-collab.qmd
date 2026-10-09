@@ -41,7 +41,7 @@ API stands for Application Programming Interface. Here is the idea:
 [Request your own](https://api.census.gov/data/key_signup.html) or use Amber's (below).
 
 ```{r Define API Key, message=FALSE}
-census_api_key("loremipsumdolorsitametconsecteturadipiscingelit")
+census_api_key("loremipsumdolorsitametconsecteturadipiscringelit")
 ```
 
 ## Import Variables
@@ -271,7 +271,7 @@ REMEMBER! [Pull]{.underline} before working in the `-collab.qmd` file. [Save, Co
 ```{r, eval=FALSE}
 
 # define API key
-census_api_key("loremipsumdolorsitametconsecteturadipiscingelit")
+census_api_key("loremipsumdolorsitametconsecteturadipiscringelit")
 ```
 
 ### Import Data
