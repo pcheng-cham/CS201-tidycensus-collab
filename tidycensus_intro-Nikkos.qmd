@@ -115,7 +115,7 @@ NAME <- get_acs(
   county = "Honolulu",
   geometry = TRUE,
   output = "wide",
-  year = 2024) %>% 
+  year = 2024) |>  
   dplyr::filter(GEOID != "15003981200" & GEOID !="15003981900")
 
 # map it

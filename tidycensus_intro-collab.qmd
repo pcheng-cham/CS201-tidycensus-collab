@@ -348,7 +348,8 @@ oahu_languageSpokenAtHome_notEnglish <- get_acs( #get data from acs
   geometry = TRUE, # give back stuff that's mappable
   output = "wide",
   year = 2024) %>% 
-  dplyr::filter(GEOID != "15003981200" & GEOID !="15003981900") # filters out tract in NW Hawaiian Islands that makes map very small and Mamala Bay Golf Course that has %100 percent of families living below the poverty line(??)
+  dplyr::filter(GEOID != "15003981200" & GEOID !="15003981900")
+# filters out tract in NW Hawaiian Islands that makes map very small and Mamala Bay Golf Course that has %100 percent of families living below the poverty line(??)
 ```
 
 ### Mapping
@@ -389,7 +390,9 @@ oahu_languageSpokenAtHome_notEnglish_2014_2024 <- map_dfr(myYears, ~{
 ```{r, eval=FALSE}
 
 # plotting time series/showing variable over time
-ggplot(oahu_languageSpokenAtHome_notEnglish_2014_2024, aes(x = year, y = estimate, group = 1)) + 
+ggplot(oahu_languageSpokenAtHome_notEnglish_2014_2024, aes(
+  x = year, 
+  y = estimate, group = 1)) + 
   geom_line() + 
   geom_point() +
   labs(title = "Honolulu County Non-English Language at Home (ACS Rolling 5-year estimates)",
@@ -400,7 +403,9 @@ ggplot(oahu_languageSpokenAtHome_notEnglish_2014_2024, aes(x = year, y = estimat
 ```{r}
 
 # cleaner/"prettier" plot
-ggplot(oahu_languageSpokenAtHome_notEnglish_2014_2024, aes(x = year, y = estimate, group = 1)) + 
+ggplot(oahu_languageSpokenAtHome_notEnglish_2014_2024, aes(
+  x = year, 
+  y = estimate, group = 1)) + 
   geom_ribbon(aes(ymax = estimate + moe, ymin = estimate - moe), 
               fill = "steelblue",
               alpha = 0.4) + 
@@ -437,7 +442,9 @@ oahu_languageSpokenAtHome_notEnglish_vs_college_education <- get_acs(
 ```{r}
 
 # plotting scatter plot
-ggplot(oahu_languageSpokenAtHome_notEnglish_vs_college_education, aes(x = percent_languageSpokenAtHome_notEnglishE,y = percent_BAE)) +
+ggplot(oahu_languageSpokenAtHome_notEnglish_vs_college_education, aes(
+  x = percent_languageSpokenAtHome_notEnglishE,
+  y = percent_BAE)) +
   geom_point() +
   geom_smooth(method = "lm") + # adds a regression line (LOESS)
   stat_cor() + # prints R and p
